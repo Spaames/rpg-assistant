@@ -1,0 +1,5 @@
+redis==4.6.0
+click==8.1.7
+rich==13.5.2
+pydantic==2.3.0
+colorama==0.4.6

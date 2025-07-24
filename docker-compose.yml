@@ -1,49 +1,90 @@
 services:
-  nextjs:
-    build: ./nextjs
+
+  # Redis - Stockage
+  redis:
+    image: redis:8.0-bookworm
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    networks:
+      - rpgnetwork
+
+  # Node.js - Backend / Bridge Redis/WebSocket
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    environment:
+      - REDIS_URL=${REDIS_URL}
+      - NODE_ENV=${NODE_ENV}
+    depends_on:
+      - redis
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    networks:
+      - rpgnetwork
+
+  # Next.js - Players Interface
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
     ports:
       - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+      - NEXT_PUBLIC_WS_URL=${NEXT_PUBLIC_WS_URL}
+      - NEXT_ENV=${NEXT_ENV}
     volumes:
-      - ./nextjs:/app
+      - ./frontend:/app
       - /app/node_modules
       - /app/.next
     depends_on:
-      - mongo
-      - python-ai
-    environment:
-      - NODE_ENV=development
-      - MONGODB_URI=mongodb://mongo:27017/rpgdb
-      - PYTHON_AI_URL=http://python-ai:8000
-      - JWT_SECRET=$(JWT_SECRET)
+      - backend
     networks:
       - rpgnetwork
 
-  mongo:
-    image: mongo
-    restart: always
-    ports:
-      - "27017:27017"
-    volumes:
-      - mongodata:/data/db
-    networks:
-      - rpgnetwork
-
-  python-ai:
-    build: ./python-ai
+  # AI - FastAPI
+  ai-service:
+    build:
+      context: ./ai-service
+      dockerfile: Dockerfile
     ports:
       - "8000:8000"
-    volumes:
-      - ./python-ai:/app
-    depends_on:
-      - mongo
     environment:
-      - MONGODB_URI=mongodb://mongo:27017/rpgdb
-      - PYTHONPATH=/app
+      - REDIS_URL=${REDIS_URL}
+    volumes:
+      - ./ai-service:/app
+    depends_on:
+      - redis
     networks:
       - rpgnetwork
+  
+  # Terminal - Python console
+  gm-terminal:
+    build:
+      context: ./gm-terminal
+      dockerfile: Dockerfile
+    environment:
+      - REDIS_URL=${REDIS_URL}
+    depends_on:
+      - redis
+    volumes:
+      - ./gm-terminal:/app
+      - ./data:/data
+    networks:
+      - rpgnetwork
+    tty: true
+    stdin_open: true
 
 volumes:
-  mongodata:
+  redis_data:
 
 networks:
   rpgnetwork:
+    driver: bridge
