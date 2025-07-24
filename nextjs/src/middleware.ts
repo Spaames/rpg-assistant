@@ -13,5 +13,5 @@ export function middleware(req: NextRequest) {
 
 //if we go there without being logged, it will redirect.
 export const config = {
-    matcher: ["/", "/home", "/library", "/wishlist", "/account", "/addBookLib"],
+    matcher: ["/",],
 }
