@@ -1,0 +1,20 @@
+{
+  "name": "GM Terminal",
+  "image": "python:3.11-slim",
+  "onCreateCommand": "apt-get update && apt-get install -y gcc && rm -rf /var/lib/apt/lists/*",
+  "postCreateCommand": "pip install --no-cache-dir -r requirements.txt",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-python.black-formatter"
+      ]
+    }
+  },
+  "containerEnv": {
+    "REDIS_URL": "redis://host.docker.internal:6379"
+  },
+  "mounts": [
+    "source=${localWorkspaceFolder}/../data,target=/data,type=bind,consistency=cached"
+  ]
+}

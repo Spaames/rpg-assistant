@@ -70,7 +70,7 @@ def interactive_test(redis_client):
                 "data": {"scene": "forest.jpg"},
                 "timestamp": datetime.now().isoformat()
             }
-            redis_client.publish("game_updates", json.dumps(event))
+            redis_client.set("game_updates", json.dumps(event))
             console.print("📸 Scène publiée: forest.jpg", style="cyan")
             
         elif cmd == "test-combat":

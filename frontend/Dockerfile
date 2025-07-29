@@ -10,7 +10,7 @@ RUN apk add --no-cache libc6-compat
 COPY package*.json ./
 
 # Installer TOUTES les dépendances (dev + prod) pour le développement
-RUN npm ci
+RUN npm install
 
 # Exposer le port
 EXPOSE 3000
