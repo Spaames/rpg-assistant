@@ -44,9 +44,11 @@ venv/
 # docker
 docker-compose.override.yml
 *.env
-
 .env
 
 backend/node_modules
 frontend/node_modules
 
+data/
+
+frontend/public/data
