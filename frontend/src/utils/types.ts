@@ -3,28 +3,25 @@ export interface User
     username: string;
 }
 
-export interface PJ {
-    name : string;
-    hp : number;
-    defence : number;
-    initiative : number;
-    image : string;
-}
-
-export interface Enemy {
+export interface Character {
     name: string;
     hp: number;
     defence: number;
     initiative: number;
     attackCac: number;
-    dmgCac: string;
+    dmgCac?: string;
     attackDistance: number;
-    dmgDistance: string;
+    dmgDistance?: string;
     attackMagic: number;
-    dmgMagic: string;
+    dmgMagic?: string;
     image: string;
-    position: {
-        x: string;
-        y: string;
-    };
+    hexId: number;
+}
+
+export interface HexData {
+  id: number;
+  row: number;
+  col: number;
+  x: number;
+  y: number;
 }

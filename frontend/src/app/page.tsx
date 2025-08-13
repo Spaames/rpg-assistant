@@ -8,6 +8,7 @@ export default function Page() {
     const [background, setBackground] = useState<string | null>(null);
     const [socket, setSocket] = useState<Socket | null>(null);
 	const [fightOn, setFightOn] = useState<boolean>(false);
+    const [npc, setNpc] = useState<number | null>(null);
 
     useEffect(() => {
         const socket = io('ws://localhost:3001');
@@ -45,7 +46,7 @@ export default function Page() {
 				{/* Hex grid overlay */}
                 {fightOn && (
                     <div className="absolute inset-0 pointer-events-none z-20">
-                        <HexGrid />
+                        <HexGrid npc={npc}/>
                     </div>
                 )}
             </div>
